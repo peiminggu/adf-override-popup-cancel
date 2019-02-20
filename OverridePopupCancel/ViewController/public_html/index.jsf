@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="index.jsf" id="d1">
+        <af:form id="f1">
+            <af:panelStretchLayout id="psl1">
+                <f:facet name="start"/>
+                <f:facet name="end"/>
+                <f:facet name="top">
+                    <af:panelGroupLayout id="pgl4" halign="center" layout="vertical">
+                        <af:outputLabel value="Override Popup Cancel Event Demo" id="ol1"/>
+                    </af:panelGroupLayout>
+                </f:facet>
+                <f:facet name="bottom"/>
+                <f:facet name="center">
+                    <af:panelGroupLayout id="pgl1" layout="vertical">
+                        <af:button text="Open Popup" id="b1">
+                            <af:showPopupBehavior popupId="popupMain" triggerType="click"/>
+                        </af:button>
+                        <af:popup childCreation="deferred" autoCancel="disabled" id="popupMain"
+                                  binding="#{backingBeanScope.backingBean.popupMain}">
+                            <af:dialog id="d2" title="Main Popup" contentWidth="400" contentHeight="300">
+                                <f:facet name="buttonBar"/>
+                                <af:panelGroupLayout id="pgl2">
+                                    <af:outputText value="Click 'Cancel' or  press 'ESC' to open Confirm Popup." id="ot1"/>
+                                </af:panelGroupLayout>
+                            </af:dialog>
+                            <af:resource type="javascript">
+                            function popupOpenedClientListener(event) {
+                               var popup = event.getSource();
+                               popup.cancel = function() {
+                                    var confPopClientId = popup.getProperty('confirmPopId');
+                                    var confPop = AdfPage.PAGE.findComponentByAbsoluteId(confPopClientId);
+                                    confPop.show();
+                               }; 
+                             }
+                            </af:resource>
+                            <af:clientListener type="popupOpened" method="popupOpenedClientListener"/>
+                            <af:clientAttribute name="confirmPopId"
+                                                value="#{backingBeanScope.backingBean.popupCancelConfirm.clientId}"/>
+                         </af:popup>
+                        <af:popup childCreation="deferred" autoCancel="disabled" id="popupCancelConfirm"
+                                  binding="#{backingBeanScope.backingBean.popupCancelConfirm}" clientComponent="true">
+                            <af:dialog id="d3" title="Confirm Popup" type="yesNo"
+                                       dialogListener="#{backingBeanScope.backingBean.onCancelConfirmDialog}">
+                                <f:facet name="buttonBar"/>
+                                <af:panelGroupLayout id="pgl3">
+                                    <af:outputText value="Click 'Yes' to close Main Popup" id="ot2"/>
+                                </af:panelGroupLayout>
+                            </af:dialog>
+                        </af:popup>
+                    </af:panelGroupLayout>
+                </f:facet>
+            </af:panelStretchLayout>
+        </af:form>
+    </af:document>
+</f:view>
